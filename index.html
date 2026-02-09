@@ -13,107 +13,94 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            font-family: 'Arial', sans-serif;
-            color: #ff4757;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
         }
         .floating-emoji {
             position: absolute;
             bottom: -50px;
             animation: float 15s linear infinite;
             opacity: 0.6;
-            z-index: -1;
+            z-index: 0;
         }
         @keyframes float {
-            0% { transform: translateY(0) translateX(0); }
-            50% { transform: translateY(-50vh) translateX(50px); }
-            100% { transform: translateY(-110vh) translateX(-20px); }
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
-        .btn-primary {
-            background-color: #ff6b6b;
-            transition: all 0.3s;
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 10;
+            max-width: 90%;
         }
-        .btn-primary:hover {
-            background-color: #ff8787;
-            transform: scale(1.1);
+        #no-btn {
+            transition: all 0.2s ease;
+            position: relative;
         }
-        #no-btn { position: absolute; }
+        .btn {
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 1.1rem;
+        }
+        #yes-btn { background-color: #ff4757; color: white; }
+        #no-btn { background-color: #ced4da; color: #495057; }
     </style>
 </head>
 <body>
 
-    <div id="game-container" class="bg-white/80 p-8 rounded-2xl shadow-xl text-center z-10 max-w-sm w-full mx-4">
-        <h1 id="question-text" class="text-2xl font-bold mb-6">Loading...</h1>
-        <div id="button-container" class="flex justify-center gap-4">
-            <button id="yes-btn" class="btn-primary text-white px-6 py-2 rounded-full font-bold">Yes</button>
-            <button id="no-btn" class="bg-gray-400 text-white px-6 py-2 rounded-full font-bold">No</button>
+    <div class="card" id="main-card">
+        <h1 id="question-text" class="text-3xl font-bold mb-8 text-[#ff4757]">Do you like me, Devangi?</h1>
+        <div class="flex justify-center gap-6" id="btn-container">
+            <button id="yes-btn" class="btn">Yes</button>
+            <button id="no-btn" class="btn">No</button>
         </div>
     </div>
 
     <script>
-        // YOUR CUSTOM MERGED SETTINGS
-        const config = {
-            valentineName: "Devangi",
-            floatingEmojis: {
-                hearts: ['❤️', '💖', '💝', '💗', '💓'],
-                bears: ['🧸', '🐻']
-            },
-            questions: {
-                first: {
-                    text: "Do you like me, Devangi?",
-                    yesBtn: "Yes",
-                    noBtn: "No",
-                    secretAnswer: "I don't like you, I love you! ❤️"
-                },
-                third: {
-                    text: "Will you be my Valentine...?",
-                    yesBtn: "Yes!",
-                    noBtn: "No"
-                }
-            },
-            celebration: {
-                title: "Yay! I'm the luckiest person...",
-                message: "I LOVEE YOUUU SOO MUCHHH",
-                emojis: "🎁💖🤗💝💋❤️💕"
-            }
-        };
-
         const questionText = document.getElementById('question-text');
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
-        let currentStep = 'first';
+        const mainCard = document.getElementById('main-card');
 
-        // Initialize
-        questionText.innerText = config.questions.first.text;
+        const hearts = ['❤️', '💖', '💝', '💗', '💓'];
+        const bears = ['🧸', '🐻'];
 
-        // "No" button escapes
+        // Function to make "No" button run away
         noBtn.addEventListener('mouseover', () => {
             const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+            noBtn.style.position = 'absolute';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
         });
 
+        // Yes button logic
         yesBtn.addEventListener('click', () => {
-            if (currentStep === 'first') {
-                alert(config.questions.first.secretAnswer);
-                currentStep = 'third';
-                questionText.innerText = config.questions.third.text;
+            if (questionText.innerText.includes("Do you like me")) {
+                alert("I don't like you, I love you! ❤️");
+                questionText.innerText = "Will you be my Valentine...?";
             } else {
                 showCelebration();
             }
         });
 
         function showCelebration() {
-            document.getElementById('game-container').innerHTML = `
-                <h1 class="text-3xl font-bold mb-4">${config.celebration.title}</h1>
-                <p class="text-xl mb-4">${config.celebration.message}</p>
-                <div class="text-4xl">${config.celebration.emojis}</div>
+            mainCard.innerHTML = `
+                <h1 class="text-4xl font-bold mb-4 text-[#ff4757]">Yay! I'm the luckiest person...</h1>
+                <p class="text-xl mb-4 text-[#ff4757]">I LOVEE YOUUU SOO MUCHHH</p>
+                <div class="text-5xl">🎁💖🤗💝💋❤️💕</div>
             `;
-            setInterval(createEmoji, 300);
+            setInterval(createEmoji, 150);
         }
 
         function createEmoji() {
-            const emojiList = [...config.floatingEmojis.hearts, ...config.floatingEmojis.bears];
+            const emojiList = [...hearts, ...bears];
             const e = document.createElement('div');
             e.className = 'floating-emoji';
             e.innerText = emojiList[Math.floor(Math.random() * emojiList.length)];
@@ -123,8 +110,10 @@
             setTimeout(() => e.remove(), 15000);
         }
 
-        // Initial background emojis
-        for(let i=0; i<15; i++) setTimeout(createEmoji, i * 500);
+        // Start initial floating emojis
+        for(let i=0; i<20; i++) {
+            setTimeout(createEmoji, i * 300);
+        }
     </script>
 </body>
 </html>
